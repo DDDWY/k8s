@@ -1,7 +1,12 @@
 package com.imooc.config.jpa;
 
-import com.imooc.config.datasource.DynamicDataSourceRouter;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,19 +20,14 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import com.imooc.config.datasource.DynamicDataSourceRouter;
 
-@Slf4j
 @SuppressWarnings("all")
 @Configuration
 @EnableConfigurationProperties(JpaProperties.class)
-@EnableJpaRepositories(value = "com.imooc.dao.repository",
-        entityManagerFactoryRef = "entityManagerFactory",
-        transactionManagerRef = "transactionManager")
+@EnableJpaRepositories(value = "com.imooc.repository",
+    entityManagerFactoryRef = "entityManagerFactory",
+    transactionManagerRef = "transactionManager")
 public class JpaEntityManager {
 
     @Autowired
@@ -39,7 +39,7 @@ public class JpaEntityManager {
     @Resource(name = "slaveDataSource")
     private DataSource slaveDataSource;
 
-//    @Primary
+    //    @Primary
     @Bean(name = "routingDataSource")
     public AbstractRoutingDataSource routingDataSource() {
         DynamicDataSourceRouter proxy = new DynamicDataSourceRouter();
@@ -59,14 +59,14 @@ public class JpaEntityManager {
         Map<String, String> properties = jpaProperties.getProperties();
         //要设置这个属性，实现 CamelCase -> UnderScore 的转换
         properties.put("hibernate.physical_naming_strategy",
-                "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
+            "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
 
         return builder
-                .dataSource(routingDataSource())//关键：注入routingDataSource
-                .properties(properties)
-                .packages("com.imooc.entity")
-                .persistenceUnit("myPersistenceUnit")
-                .build();
+            .dataSource(routingDataSource())//关键：注入routingDataSource
+            .properties(properties)
+            .packages("com.imooc.domain")
+            .persistenceUnit("myPersistenceUnit")
+            .build();
     }
 
     @Primary
@@ -80,6 +80,5 @@ public class JpaEntityManager {
     public PlatformTransactionManager transactionManager(EntityManagerFactoryBuilder builder) {
         return new JpaTransactionManager(entityManagerFactory(builder));
     }
-
 
 }

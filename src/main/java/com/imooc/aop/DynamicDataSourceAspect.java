@@ -1,19 +1,18 @@
 package com.imooc.aop;
 
-import com.imooc.config.datasource.DataSourceContextHolder;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-@Slf4j
+import com.imooc.config.datasource.DataSourceContextHolder;
+
 @Aspect
 @Component
 public class DynamicDataSourceAspect {
 
-    @Pointcut("execution(* com.imooc.service..*.*(..))")
+    @Pointcut("execution(* com.imooc.repository..*.*(..))")
     private void aspect() {
 
     }
@@ -22,19 +21,15 @@ public class DynamicDataSourceAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         String method = joinPoint.getSignature().getName();
 
-        if (method.startsWith("find") || method.startsWith("select") || method.startsWith("query") || method
-                .startsWith("search")) {
-            DataSourceContextHolder.setDataSource("slaveDataSource");
-            log.info("switch to slave datasource...");
-        } else {
+        if (method.contains("save")) {
             DataSourceContextHolder.setDataSource("masterDataSource");
-            log.info("switch to master datasource...");
+        } else {
+            DataSourceContextHolder.setDataSource("slaveDataSource");
         }
 
         try {
             return joinPoint.proceed();
-        }finally {
-            log.info("清除 datasource router...");
+        } finally {
             DataSourceContextHolder.clear();
         }
 
