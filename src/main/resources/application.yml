@@ -1,7 +1,7 @@
 spring:
   datasource:   #多数据源配置
     master:
-      url: jdbc:mysql://192.168.14.119:13306/test
+      url: jdbc:mysql://mysql-0.mysql.ddd.svc.cluster.local:3306/test
       username: root
       password: 123456
       driver-class-name: com.mysql.jdbc.Driver
