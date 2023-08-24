@@ -1,12 +1,14 @@
 spring:
   datasource:   #多数据源配置
     master:
-      url: jdbc:mysql://mysql-0.mysql.ddd.svc.cluster.local:3306/test
+      #url: jdbc:mysql://mysql-0.mysql.ddd.svc.cluster.local:3306/test?useUnicode=true&useSSL=false
+      url: jdbc:mysql://mysql-0.mysql.ddd.svc.cluster.local:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
       username: root
       password: 123456
       driver-class-name: com.mysql.jdbc.Driver
     slave:
-      url: jdbc:mysql://192.168.14.119:13306/test
+      #url: jdbc:mysql://10.68.216.92:3306/test?useUnicode=true&useSSL=false
+      url: jdbc:mysql://mysql-read.ddd:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
       username: root
       password: 123456
       driver-class-name: com.mysql.jdbc.Driver
