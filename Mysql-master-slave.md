@@ -1,4 +1,5 @@
 # 配置Mysql主从复制
+ * 文詹总参考：https://kubernetes.io/zh-cn/docs/tasks/run-application/run-replicated-stateful-application/
  * 总体思路：MySQL 示例部署包含一个 ConfigMap、
    三个 Service（mysql服务设置为无头服务，mysql-read作为读服务，mysql-write服务作为对外暴露服务，因为是测试环境没有多余的域名可使用 ，生产上建议使用igress对外暴露，好处是有个稳定的域名） 
    与一个 StatefulSet。
